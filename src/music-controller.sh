@@ -19,7 +19,7 @@ is_paused() {
 }
 
 pause() {
-    kill -TSTP "$(get_pid)"
+    kill -STOP "$(get_pid)"
 }
 
 resume_play() {

@@ -35,9 +35,22 @@ stop() {
 
 case "$1" in
     # prepend) TODO ;;
-    append)  echo "$(realpath "$2")" >> "$QUEUE_FILE" ;;
+    append)
+        if   [ -f "$2" ]; then
+            echo "$(realpath "$2")" >> "$QUEUE_FILE"
+        elif [ -d "$2" ]; then
+            for path in "$2"/*
+            do
+                "$0" append "$path"
+            done
+        else
+            echo "No such file: $2" 1>&2
+            exit 2
+        fi
+        ;;
     play)    is_paused && resume_play ;;
     pause)   pause ;;
     toggle)  is_paused && "$0" play || "$0" pause ;;
     stop)    stop && rm "$QUEUE_FILE" && touch "$QUEUE_FILE" ;;
+    *)       echo "Bad command: $1" && exit 2 ;;
 esac

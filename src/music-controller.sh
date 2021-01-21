@@ -48,9 +48,10 @@ case "$1" in
             exit 2
         fi
         ;;
-    play)    is_paused && resume_play ;;
-    pause)   pause ;;
-    toggle)  is_paused && "$0" play || "$0" pause ;;
-    stop)    stop && rm "$QUEUE_FILE" && touch "$QUEUE_FILE" ;;
-    *)       echo "Bad command: $1" && exit 2 ;;
+    play)     is_paused && resume_play ;;
+    pause)    pause ;;
+    toggle)   is_paused && "$0" play || "$0" pause ;;
+    stop)     stop && rm "$QUEUE_FILE" && touch "$QUEUE_FILE" ;;
+    getqueue) cat "$QUEUE_FILE" ;;
+    *)        echo "Bad command: $1" && exit 2 ;;
 esac

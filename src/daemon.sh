@@ -12,7 +12,7 @@ do
     then
         echo "[INFO] Play: $next_track"
         sed -i 1d "$QUEUE_FILE"
-        ffplay -nodisp -hide_banner -nostats "$next_track"
+        ffplay -nodisp -hide_banner -nostats -autoexit "$next_track"
     fi
 
     sleep "$DOWNTIME"

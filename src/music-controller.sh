@@ -26,6 +26,10 @@ resume_play() {
     kill -CONT "$(get_pid)"
 }
 
+next_track() {
+    kill "$(get_pid)"
+}
+
 stop() {
     PID="$(get_pid)"
     test -z $PID && return
@@ -51,6 +55,7 @@ case "$1" in
     play)     is_paused && resume_play ;;
     pause)    pause ;;
     toggle)   is_paused && "$0" play || "$0" pause ;;
+    next)     is_paused && resume_play; next_track ;;
     stop)     stop && rm "$QUEUE_FILE" && touch "$QUEUE_FILE" ;;
     getqueue) cat "$QUEUE_FILE" ;;
     *)        echo "Bad command: $1" && exit 2 ;;

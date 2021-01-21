@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. "$(dirname "$0")/common.sh"
+. "$(dirname "$(realpath "$0")")/common.sh"
 
 get_pid() {
     # This assumes that there is only one ffplay process.

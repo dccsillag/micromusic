@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. "$(dirname "$0")/common.sh"
+. "$(dirname "$(realpath "$0")")/common.sh"
 
 DOWNTIME=1
 

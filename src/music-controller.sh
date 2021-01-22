@@ -65,21 +65,26 @@ status() {
     echo "There are $(cat "$QUEUE_FILE" | wc -l) more tracks in the queue."
 }
 
+prepend_text() { printf '%s\n%s\n' "$1" "$(cat "$2")" > "$2"; }
+append_text()  { echo "$1" >> "$2"; }
+
+recursive_insert() {
+    if   [ -f "$1" ]; then
+        "$3" "$(realpath "$1")" "$2"
+    elif [ -d "$1" ]; then
+        ls "$1" | sort $4 | while read -r path
+        do
+            recursive_insert "$1/$path" "$2" "$3" "$4"
+        done
+    else
+        echo "No such file or directory: $1" 1>&2
+        exit 2
+    fi
+}
+
 case "$1" in
-    # prepend) TODO ;;
-    append)
-        if   [ -f "$2" ]; then
-            echo "$(realpath "$2")" >> "$QUEUE_FILE"
-        elif [ -d "$2" ]; then
-            for path in "$2"/*
-            do
-                "$0" append "$path"
-            done
-        else
-            echo "No such file: $2" 1>&2
-            exit 2
-        fi
-        ;;
+    prepend)  recursive_insert "$2" "$QUEUE_FILE" prepend_text "-r" ;;
+    append)   recursive_insert "$2" "$QUEUE_FILE" append_text  ""   ;;
     play)     is_paused && resume_play ;;
     pause)    pause ;;
     toggle)   is_paused && "$0" play || "$0" pause ;;

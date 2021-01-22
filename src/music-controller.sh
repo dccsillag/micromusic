@@ -27,7 +27,15 @@ get_current_track() {
     # This assumes that there is only one ffplay process.
     # It may be a good idea to handle the other case as well.
     # Or maybe we can use pgrep's -G flag?
-    pgrep -af ffplay | sed 's/[^/]\+\(.\+\)/\1/'
+
+    TEMPFILE=$(mktemp)
+    pgrep -af ffplay | sed 's/[^/]\+\(.\+\)/\1/' > "$TEMPFILE"
+    cat "$QUEUE_FILE" >> "$TEMPFILE"
+
+    remove_common_path_prefix "$TEMPFILE"
+    head -1 "$TEMPFILE"
+
+    rm "$TEMPFILE"
 }
 
 pause() {

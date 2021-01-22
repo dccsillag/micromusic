@@ -85,7 +85,6 @@ case "$1" in
     toggle)   is_paused && "$0" play || "$0" pause ;;
     next)     is_paused && resume_play; next_track ;;
     stop)     stop && rm "$QUEUE_FILE" && touch "$QUEUE_FILE" ;;
-    getqueue) cat "$QUEUE_FILE" ;;
     status)   status ;;
     list)     TEMPFILE=$(mktemp) \
                 && cp -f "$QUEUE_FILE" "$TEMPFILE" \
@@ -93,5 +92,7 @@ case "$1" in
                 && cat "$TEMPFILE" \
                 && rm "$TEMPFILE"
                 ;;
+    getqueue) cat "$QUEUE_FILE" ;;
+    edit)     "${EDITOR:edit}" "$QUEUE_FILE" ;;
     *)        echo "Bad command: $1" && exit 2 ;;
 esac

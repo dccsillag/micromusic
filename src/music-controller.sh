@@ -23,13 +23,16 @@ is_paused() {
     return $?
 }
 
-get_current_track() {
+get_current_track_path() {
     # This assumes that there is only one ffplay process.
     # It may be a good idea to handle the other case as well.
     # Or maybe we can use pgrep's -G flag?
+    pgrep -af ffplay | sed 's/[^/]\+\(.\+\)/\1/'
+}
 
+get_current_track() {
     TEMPFILE=$(mktemp)
-    pgrep -af ffplay | sed 's/[^/]\+\(.\+\)/\1/' > "$TEMPFILE"
+    get_current_track_path > "$TEMPFILE"
     cat "$QUEUE_FILE" >> "$TEMPFILE"
 
     remove_common_path_prefix "$TEMPFILE"
@@ -85,6 +88,7 @@ recursive_insert() {
 case "$1" in
     prepend)  recursive_insert "$2" "$QUEUE_FILE" prepend_text "-r" ;;
     append)   recursive_insert "$2" "$QUEUE_FILE" append_text  ""   ;;
+    restart)  prepend_text "$(get_current_track_path)" "$QUEUE_FILE" && "$0" next ;;
     play)     is_paused && resume_play ;;
     pause)    pause ;;
     toggle)   is_paused && "$0" play || "$0" pause ;;

@@ -11,7 +11,7 @@ remove_common_path_prefix() {
     n_matches="$(grep -Gc "^$prefix" "$1")" # FIXME: $prefix might be interpreted as a regex
     n_lines="$(cat "$1" | wc -l)"
 
-    if [ "$n_matches" -ne "$n_lines" ]
+    if [ "$n_matches" -ne "$n_lines" ] || [ "$n_lines" -le 0 ]
     then
         sed -i 's|^\(.\+\)\.[A-Za-z0-9]\+$|\1|' "$1"
         return 0

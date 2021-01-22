@@ -10,6 +10,11 @@ get_pid() {
     return $?
 }
 
+has_player() {
+    get_pid > /dev/null
+    return $?
+}
+
 is_paused() {
     # This assumes that there is only one ffplay process.
     # It may be a good idea to handle the other case as well.
@@ -37,6 +42,14 @@ stop() {
     kill "$PID"
 }
 
+status() {
+    has_player || { echo 'Nothing is playing.' && exit 0; }
+
+    is_paused && echo 'Player is paused!' || echo 'Currently playing.'
+
+    echo "There are $(cat "$QUEUE_FILE" | wc -l) more tracks in the queue."
+}
+
 case "$1" in
     # prepend) TODO ;;
     append)
@@ -58,5 +71,6 @@ case "$1" in
     next)     is_paused && resume_play; next_track ;;
     stop)     stop && rm "$QUEUE_FILE" && touch "$QUEUE_FILE" ;;
     getqueue) cat "$QUEUE_FILE" ;;
+    status)   status ;;
     *)        echo "Bad command: $1" && exit 2 ;;
 esac

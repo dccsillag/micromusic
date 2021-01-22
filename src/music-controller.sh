@@ -79,5 +79,11 @@ case "$1" in
     stop)     stop && rm "$QUEUE_FILE" && touch "$QUEUE_FILE" ;;
     getqueue) cat "$QUEUE_FILE" ;;
     status)   status ;;
+    list)     TEMPFILE=$(mktemp) \
+                && cp -f "$QUEUE_FILE" "$TEMPFILE" \
+                && remove_common_path_prefix "$TEMPFILE" \
+                && cat "$TEMPFILE" \
+                && rm "$TEMPFILE"
+                ;;
     *)        echo "Bad command: $1" && exit 2 ;;
 esac

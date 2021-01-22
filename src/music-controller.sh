@@ -23,6 +23,13 @@ is_paused() {
     return $?
 }
 
+get_current_track() {
+    # This assumes that there is only one ffplay process.
+    # It may be a good idea to handle the other case as well.
+    # Or maybe we can use pgrep's -G flag?
+    pgrep -af ffplay | sed 's/[^/]\+\(.\+\)/\1/'
+}
+
 pause() {
     kill -STOP "$(get_pid)"
 }
@@ -45,7 +52,7 @@ stop() {
 status() {
     has_player || { echo 'Nothing is playing.' && exit 0; }
 
-    is_paused && echo 'Player is paused!' || echo 'Currently playing.'
+    is_paused && echo 'Player is paused!' || echo "Currently playing: $(get_current_track)"
 
     echo "There are $(cat "$QUEUE_FILE" | wc -l) more tracks in the queue."
 }

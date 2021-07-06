@@ -61,10 +61,21 @@ stop() {
 }
 
 status() {
-    has_player || { echo 'Nothing is playing.' && exit 0; }
+    if has_player
+    then
+        is_paused && echo 'Status: paused' || echo "Status: playing"
 
-    is_paused && echo 'Player is paused!' || echo "Currently playing: $(get_current_track)"
-
+        echo "Currently playing: $(get_current_track)"
+    else
+        if [ -s "$QUEUE_FILE" ]
+        then
+            echo "Status: waiting"
+            echo
+        else
+            echo 'Nothing is playing.'
+            exit 0
+        fi
+    fi
     echo "There are $(cat "$QUEUE_FILE" | wc -l) more tracks in the queue."
 }
 

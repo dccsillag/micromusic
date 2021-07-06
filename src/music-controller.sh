@@ -102,6 +102,6 @@ case "$1" in
                 && rm "$TEMPFILE"
                 ;;
     getqueue) cat "$QUEUE_FILE" ;;
-    edit)     "${EDITOR:edit}" "$QUEUE_FILE" ;;
+    edit)     "${EDITOR:-edit}" "$QUEUE_FILE" ;;
     *)        echo "Bad command: $1" && exit 2 ;;
 esac

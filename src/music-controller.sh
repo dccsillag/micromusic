@@ -60,22 +60,49 @@ stop() {
     kill "$PID"
 }
 
-status() {
-    if has_player
-    then
-        is_paused && echo 'Status: paused' || echo "Status: playing"
+get() {
+    case "$1" in
+        status)
+            if has_player
+            then
+                if is_paused
+                then
+                    echo paused
+                else
+                    echo playing
+                fi
+            else
+                if [ -s "$QUEUE_FILE" ]
+                then
+                    echo waiting
+                else
+                    echo empty
+                fi
+            fi
+            ;;
+        ninqueue) cat "$QUEUE_FILE" | wc -l ;;
+    esac
+}
 
-        echo "Currently playing: $(get_current_track)"
-    else
-        if [ -s "$QUEUE_FILE" ]
-        then
+status() {
+    case $(get status) in
+        paused)
+            echo "Status: paused"
+            echo "Currently playing: $(get_current_track)"
+            ;;
+        playing)
+            echo "Status: playing"
+            echo "Currently playing: $(get_current_track)"
+            ;;
+        waiting)
             echo "Status: waiting"
             echo
-        else
-            echo 'Nothing is playing.'
+            ;;
+        empty)
+            echo "Nothing is playing."
             exit 0
-        fi
-    fi
+            ;;
+    esac
     echo "There are $(cat "$QUEUE_FILE" | wc -l) more tracks in the queue."
 }
 
@@ -106,6 +133,7 @@ case "$1" in
     next)     is_paused && resume_play; next_track ;;
     stop)     stop && rm "$QUEUE_FILE" && touch "$QUEUE_FILE" ;;
     status)   status ;;
+    get)      get "$2" ;;
     list)     TEMPFILE=$(mktemp) \
                 && cp -f "$QUEUE_FILE" "$TEMPFILE" \
                 && remove_common_path_prefix "$TEMPFILE" \

@@ -82,6 +82,7 @@ stop() {
 
 get() {
     case "$1" in
+        active) has_player ;;
         status)
             if has_player
             then

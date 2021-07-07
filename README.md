@@ -16,6 +16,27 @@ We need the following dependencies:
 - [`socat`](https://linux.die.net/man/1/socat)
 - [`jq`](https://stedolan.github.io/jq/)
 
+Installation
+------------
+
+If you want to install to `/usr/bin/`, then run
+
+```sh
+sudo ./install.sh
+```
+
+If you want to install to `~/.local/bin/`, then run
+
+```sh
+./install.sh
+```
+
+If you want to install to `$YOUR_OWN_PATH/bin/`, then you can run
+
+```sh
+PREFIX="$YOUR_OWN_PATH" ./install.sh
+```
+
 Usage
 -----
 

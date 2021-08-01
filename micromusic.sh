@@ -74,7 +74,11 @@ next_track() {
     mpvcmd playlist-next force >/dev/null
 }
 
-stop() {
+prev_track() {
+    mpvcmd playlist-prev force >/dev/null
+}
+
+clear() {
     mpvcmd quit >/dev/null && rm "$SOCKET_FILE"
 }
 
@@ -158,7 +162,8 @@ case "$1" in
     pause)    pause ;;
     toggle)   is_paused && "$0" play || "$0" pause ;;
     next)     is_paused && resume_play; next_track ;;
-    stop)     stop ;;
+    prev)     is_paused && resume_play; prev_track ;;
+    clear)    clear ;;
     status)   status ;;
     get)      get "$2" ;;
     list)     TEMPFILE=$(mktemp)

@@ -131,7 +131,7 @@ status() {
 
 launch_idle_mpv() {
     echo "[INFO] launching mpv"
-    nohup mpv --input-ipc-server="$SOCKET_FILE" --idle > /dev/null 2>&1 &
+    nohup mpv --input-ipc-server="$SOCKET_FILE" --idle=once > /dev/null 2>&1 &
     sleep 1
 }
 

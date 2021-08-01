@@ -5,10 +5,6 @@ SOCKET_FILE="$BASE_DIR/mpvsocket"
 
 mkdir -p "$BASE_DIR"
 
-# TODO: if the socket exists but mpv doesn't respond to a really basic command, then delete it.
-#       OR:
-#       use lsof to check if mpv is listening to that socket.
-
 remove_common_path_prefix() {
     test -f "$1" || { echo "no such file for remove_common_path_prefix: $1"; exit 2; }
 
@@ -29,11 +25,13 @@ remove_common_path_prefix() {
 }
 
 has_player() {
-    test -S "$SOCKET_FILE"
+    test -S "$SOCKET_FILE" \
+        && ( echo '{ "command": "print-text hello" }' \
+            | socat - ~/.local/share/music-controller/mpvsocket > /dev/null 2>&1 )
 }
 
 mpvcmd() {
-    has_player || { echo "no mpv instance!" 1>&2; exit 2; }
+    has_player || launch_idle_mpv
     cmd="$({ for arg in "$@"; do echo "$arg"; done; } | jq -MRsc 'split("\n")[:-1]')"
     echo "{ \"command\": $cmd }" | socat - "$SOCKET_FILE" | jq -M .data
 }
